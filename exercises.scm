@@ -123,4 +123,50 @@
       (else
        (cond ((atom? s2) #f)
              (else (eqlist? s1 s2)))))))
-       
+
+; remove an s-expression from the list
+(define rembers
+  (lambda (s l)
+    (cond
+      ((null? l) '())
+      ((equal? s (car l)) (rembers s (cdr l)))
+      (else (cons (car l) (rembers s (cdr l)))))))
+
+;check if representation of arithmetic expression contains numbers only
+(define numbered?
+  (lambda (ae)
+    (cond ((null? ae) #t)
+          ((atom? (car ae))
+           (cond
+             ((null? (cdr ae))(number? (car ae)))
+             ((number? (car ae))(numbered? (cdr (cdr ae))))
+             (else #f)))
+          (else
+           (cond 
+             ((null? (cdr ae))(numbered? (car ae)))
+             (else               
+              (and (numbered? (car ae))(numbered? (cdr (cdr ae))))))))))
+
+; checks whether lat is a set or not                   
+(define set?
+  (lambda (lat)
+    (cond ((null? lat) #t)
+          ((member? (car lat) (cdr lat)) #f)
+          (else (set? (cdr lat))))))
+
+; makeset using member?
+(define makeset
+  (lambda (lat)
+    (cond ((null? lat) '())
+          ((member? (car lat) (cdr lat)) (makeset (cdr lat)))
+          (else (cons (car lat)(makeset (cdr lat)))))))
+
+
+; makeset using remove*
+(define makesetr*
+  (lambda (lat)
+    (cond ((null? lat) '())
+          (else 
+           (cons (car lat) 
+                  (makesetr*       
+                   (rember* (car lat) (cdr lat))))))))
